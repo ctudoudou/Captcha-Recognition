@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2018/2/8 下午3:56
 # @Author  : tudoudou
-# @File    : captcha.py
+# @File    : get_captcha.py
 # @Software: PyCharm
 
 
@@ -11,11 +11,12 @@ from skimage import img_as_float
 import matplotlib.pyplot as plt
 import numpy.matlib
 import math
+import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import random
 import time
 
-# 文字集
+# 簡體常用中文集
 HAN = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许',
        '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜', '戚', '谢', '邹', '喻', '柏', '水', '窦', '章',
        '云', '苏', '潘', '葛', '奚', '范', '彭', '郎', '鲁', '韦', '昌', '马', '苗', '凤', '花', '方', '俞', '任', '袁', '柳',
@@ -75,38 +76,38 @@ HAN = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '�
        '乾', '坤', '上', '们', '来', '到', '时', '大', '地', '为',
        ]
 
-# 扭曲度
-DEGREE=4.5
+# 扭轉度
+DEGREE = 4.5
 
 
 class ImageCaptcha:
     """
-    验证码类
+    驗證碼類
     """
 
     def __init__(self, length, width, height, font):
-        """ 初始化函数
+        """ 初始化函數
 
         Args:
-            length: 字符长度
-            width: 图片宽度
-            height: 图片高度
-            font: 使用字体的路径
+            length: 字符長度
+            width: 圖片寬度
+            height: 圖片高度
+            font: 字體的路徑
         """
         self.length = length
         self.width = width
         self.height = height
         self.font = font
-        print('初始化完成')
+        print('init Captcha ...')
 
     def random_code(self, length):
-        """ 生成随机字符串
+        """ 生產指定長度的隨機字符串
 
         Args:
-            length: 字符长度
+            length: 字符串長度
 
         Returns:
-            code: 随机字符串
+            code: 隨機的字符串
         """
         code = ''
         for char in range(length):
@@ -114,35 +115,35 @@ class ImageCaptcha:
         return code
 
     def __random_color(self, s=1, e=255):
-        """ 随机颜色 默认颜色范围【1，255】
+        """ 隨機顏色值 默認範圍於「1, 255」
 
         Args:
-            s: 起始数值
-            e: 终止数值
+            s: 開始數值
+            e: 終止數值
 
         Returns:
-            颜色数值 (数值,数值,数值)
+            顏色數值 (數值,數值,數值)
         """
 
         return (random.randint(s, e), random.randint(s, e), random.randint(s, e))
 
     def font2img(self, font, char, font_size=50, img_size=None, font_color=None):
-        """利用字体库生成包含指定字符的png图片或者PIL对象
+        """利用字体库生成包含指定字符的png图片或者PIL对象 利用字體文件生成指定字符串的PIL對象
 
         Args:
-            font: 字体文件路径
-            char: 需要生成图片的一个字符
-            font_size: 字体大小
-            img_size: 图片大小
-            font_color: 字体颜色，默认为随机
+            font: 字體文件的路徑
+            char: 需要生成的字符
+            font_size: 字體大小，默認50
+            img_size: 圖片大小
+            font_color: 字體顏色，默認為隨機
 
         Returns:
-            返回处理完成的Image对象
+            返回生產的PIL對象
         """
 
         if not font_color:
             # font_color = random.randint(0, 256) + random.randint(0, 256) * 255 + random.randint(0, 256) * 255 * 255
-            if random.randint(0,1):
+            if random.randint(0, 1):
                 font_color = self.__random_color(190, 220)
             else:
                 font_color = self.__random_color(10, 130)
@@ -167,15 +168,15 @@ class ImageCaptcha:
         return im
 
     def create_background(self, width, height, bg_color):
-        """ 创建背景
+        """ 創建背景
 
         Args:
-            width: 宽度
-            height: 高度
+            width: 背景寬度
+            height: 背景高度
             bg_color: 背景填充色
 
         Returns:
-            Image 对象
+            Image 對象
         """
         image = Image.new('RGB', (width, height), bg_color)
         draw = ImageDraw.Draw(image)
@@ -186,20 +187,20 @@ class ImageCaptcha:
         return image
 
     def sb(self, img):
-        """ 扭曲图形函数
+        """ 扭曲圖片
 
         Args:
-            img: 图像
+            img: 圖像
 
         Returns:
-            Image 对象
+            Image 對象
         """
         img = img_as_float(img)
         row, col, channel = img.shape
         img_out = img * 1.0
         alpha = 70.0
         beta = 50.0
-        degree = DEGREE    # 扭曲度调节
+        degree = DEGREE  # 扭曲度调节
         center_x = (col - 1) / 2.0
         center_y = (row - 1) / 2.0
         xx = np.arange(col)
@@ -230,7 +231,7 @@ class ImageCaptcha:
         return img_out
 
     def white_bg(self, img_or_path):
-        """ 白色背景
+        """ 白色化背景
 
         Args:
             img_or_path:
@@ -256,11 +257,11 @@ class ImageCaptcha:
         return img
 
     def get_image(self):
-        """ 生成图片
+        """ 生成圖片
 
         Returns:
-            image: Image 对象
-            code: 文字
+            image: Image 對象
+            code: 字符串
         """
         image = self.create_background(self.width, self.height, (255, 255, 255))
         code = self.random_code(self.length)
@@ -277,15 +278,22 @@ class ImageCaptcha:
                 random.randint(0, self.height - 60)),
                         mask=tem)
             code_img.append(tem)
-        image = image.filter(ImageFilter.EDGE_ENHANCE)  # 边界增强
-        image = image.filter(ImageFilter.SHARPEN)   # 锐化
+        image = image.filter(ImageFilter.EDGE_ENHANCE)  # 邊界增強
+        image = image.filter(ImageFilter.SHARPEN)  # 銳化
+
         # image = image.filter(ImageFilter.EDGE_ENHANCE)
-        # 更多函数参考 ImageFilter模块
+        # 更多的函數參考 ImageFilter模塊
         return image, code
+
+    def __del__(self):
+        try:
+            os.remove('./temp.png')
+        except FileNotFoundError:
+            print('Temporary file not found')
 
 
 if __name__ == '__main__':
     ca_img = ImageCaptcha(2, 170, 80, './MSYHMONO.ttf')
-    for i in range(10):
-        image,code = ca_img.get_image()
+    for i in range(5):
+        image, code = ca_img.get_image()
         image.save(str(time.time()) + '.png')
