@@ -7,7 +7,7 @@
 ├── LICENSE         授權文件
 ├── MSYHMONO.ttf    依賴字體文件
 ├── README.md
-└── get_captcha.py  獲取驗證碼模塊
+├── get_captcha.py  獲取驗證碼模塊
 └── requirements.txt依賴庫文件
 
 ```
