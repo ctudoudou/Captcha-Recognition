@@ -5,10 +5,6 @@
 # @File    : dataset.py
 # @Software: PyCharm
 
-import os
-import sys
-
-sys.path.append(os.getcwd())
 
 from get_captcha import ImageCaptcha
 
