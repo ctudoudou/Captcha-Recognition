@@ -111,7 +111,7 @@ class ImageCaptcha:
         """
         code = ''
         for char in range(length):
-            code += HAN[random.randint(1, 1130)]
+            code += HAN[random.randint(1, 1129)]
         return code
 
     def __random_color(self, s=1, e=255):
@@ -143,7 +143,8 @@ class ImageCaptcha:
 
         if not font_color:
             # font_color = random.randint(0, 256) + random.randint(0, 256) * 255 + random.randint(0, 256) * 255 * 255
-            if random.randint(0, 1):
+            # if random.randint(0, 1):
+            if False:
                 font_color = self.__random_color(190, 220)
             else:
                 font_color = self.__random_color(10, 130)

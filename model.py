@@ -91,7 +91,7 @@ def identity_block(input_tensor, bn_axis, filters, phase, name, strides=(1, 1)):
 
 
 def my_resnet():
-    inputs = Input(shape=(1, 40, 50))
+    inputs = Input(shape=(1, 85, 80))
 
     x = Conv2D(
         filters=4, kernel_size=(2, 4), padding='same', name='Conv1', data_format='channels_first')(inputs)
