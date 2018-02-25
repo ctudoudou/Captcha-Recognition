@@ -6,12 +6,12 @@
 # @Software: PyCharm
 
 
-from tensorflow.contrib import keras
-from tensorflow.contrib.keras.api.keras import layers
-from tensorflow.contrib.keras.api.keras.models import model_from_json,load_model,Model
-from tensorflow.contrib.keras.api.keras.layers import Conv2D, BatchNormalization, Activation, Flatten
-from tensorflow.contrib.keras.api.keras.layers import Input, MaxPooling2D, AveragePooling2D, Dense
-from tensorflow.contrib.keras.api.keras.layers import Dropout, UpSampling2D
+import keras
+from keras import layers
+from keras.models import model_from_json, load_model, Model
+from keras.layers import Conv2D, BatchNormalization, Activation, Flatten
+from keras.layers import Input, MaxPooling2D, AveragePooling2D, Dense
+from keras.layers import Dropout, UpSampling2D
 import numpy as np
 
 
@@ -91,13 +91,13 @@ def identity_block(input_tensor, bn_axis, filters, phase, name, strides=(1, 1)):
 
 
 def my_resnet():
-    inputs = Input(shape=(1, 85, 80))
+    inputs = Input(shape=(1, 80, 85))
 
     x = Conv2D(
         filters=4, kernel_size=(2, 4), padding='same', name='Conv1', data_format='channels_first')(inputs)
     x = BatchNormalization(axis=1, name='BN_Conv1')(x)
     x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2, 2), strides=(1, 1), data_format='channels_first')(x)
+    x = MaxPooling2D(pool_size=(3, 3), strides=(2, 2), data_format='channels_first')(x)
 
     x = conv_block(input_tensor=x, bn_axis=1, filters=(4, 4, 64), phase=2, name='a')
     x = identity_block(input_tensor=x, bn_axis=1, filters=(4, 4, 64), phase=2, name='b')
@@ -110,7 +110,8 @@ def my_resnet():
     x = AveragePooling2D((2, 2), name='avg_pool')(x)
     x = Flatten()(x)
     x = Dropout(0.2)(x)
-    x = [Dense(11, activation='softmax', name='sotfmax11_%d' % (i + 1))(x) for i in range(4)]
+    # x = [Dense(11, activation='softmax', name='sotfmax11_%d' % (i + 1))(x) for i in range(4)]
+    x = Dense(1130, activation='softmax', name='sotfmax1130')(x)
     #     x = GlobalMaxPooling2D()(x)
 
     model = Model(inputs, x, name='My_Resnet')
@@ -135,7 +136,7 @@ def tr_model(modelname, X, y, eval_X, eval_y, batch_size, epochs):
     model.save(modelname)
 
 
-def use_model(modelname, X, y,):
+def use_model(modelname, X, y, ):
     model = load_model(modelname)
     temp = model.predict(X)
     result = arr2list(temp)
@@ -186,5 +187,3 @@ def predict(filename, modelname='test1.h5'):
 
 if __name__ == '__main__':
     create_model()
-
-

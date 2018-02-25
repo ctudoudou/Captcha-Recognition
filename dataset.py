@@ -24,8 +24,9 @@ def get_data(img):
     l, r = numpy.zeros([1, 1130]), numpy.zeros([1, 1130])
     l[0][HAN.index(ca_lab_l)] = 1
     r[0][HAN.index(ca_lab_l)] = 1
+    ca_img_l=numpy.array(ca_img_l)
     # return numpy.array(ca_img_l), numpy.array(ca_img_r), l, r
-    return numpy.array(ca_img_l), l
+    return numpy.array([[ca_img_l]]), l
 
 
 def g_get_data():
